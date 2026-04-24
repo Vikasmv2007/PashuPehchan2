@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Identify Breed — PashuPehchan{% endblock %}
+
+{% block extra_head %}
+<style>
+  .conf-bar-fill { width: {{ (result.confidence * 100)|int if result else 0 }}%; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="section-label">AI Identification</div>
+    <h1>Upload Animal Photo</h1>
+    <p>Upload a clear photo of your cattle or buffalo and get an instant breed identification with detailed care and economic information.</p>
+  </div>
+</div>
+
+<div class="upload-page container">
+
+  <!-- ── UPLOAD FORM ── -->
+  <div class="upload-layout">
+    <div class="upload-form-col">
+      <div class="card form-card">
+        <h2 class="card-title">📸 Submit for Analysis</h2>
+
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+
+          <!-- Image Drop Zone -->
+          <div class="drop-zone" id="dropZone">
+            <div class="dz-icon">🖼️</div>
+            <p class="dz-main">Drag &amp; drop image here</p>
+            <p class="dz-sub">or click to browse</p>
+            <p class="dz-formats">Supports JPG, PNG, WEBP &nbsp;·&nbsp; Max 10 MB</p>
+            <input type="file" name="image" id="imageInput" accept=".jpg,.jpeg,.png,.webp" required hidden />
+          </div>
+          <div class="preview-wrap" id="previewWrap" style="display:none;">
+            <img id="previewImg" src="" alt="Preview" />
+            <button type="button" class="remove-img" id="removeImg">✕ Remove</button>
+          </div>
+
+          <!-- Animal Type -->
+          <div class="form-group">
+            <label class="form-label">Animal Type <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-card {% if form_data.get('animal_type','cattle')=='cattle' %}selected{% endif %}">
+                <input type="radio" name="animal_type" value="cattle"
+                  {% if form_data.get('animal_type','cattle')=='cattle' %}checked{% endif %} />
+                <span class="radio-icon">🐄</span>
+                <span>Cattle</span>
+              </label>
+              <label class="radio-card {% if form_data.get('animal_type')==='buffalo' %}selected{% endif %}">
+                <input type="radio" name="animal_type" value="buffalo"
+                  {% if form_data.get('animal_type')=='buffalo' %}checked{% endif %} />
+                <span class="radio-icon">🦬</span>
+                <span>Buffalo</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="form-group">
+            <label for="location" class="form-label">Location / Village</label>
+            <input type="text" id="location" name="location" class="form-control"
+              placeholder="e.g. Anand, Gujarat"
+              value="{{ form_data.get('location', '') }}" />
+          </div>
+
+          <!-- Age -->
+          <div class="form-group">
+            <label for="age" class="form-label">Approximate Age (years)</label>
+            <input type="number" id="age" name="age" class="form-control"
+              placeholder="e.g. 3.5" min="0" max="30" step="0.5"
+              value="{{ form_data.get('age', '') }}" />
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes" class="form-label">Additional Notes</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3"
+              placeholder="Any observations about the animal's condition, origin, or behaviour…">{{ form_data.get('notes', '') }}</textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+            🔍 Identify Breed
+          </button>
+          <p class="form-hint">Results are displayed instantly. All data is stored securely in the national livestock database.</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── RESULT / INFO PANEL ── -->
+    <div class="result-col">
+
+      {% if result %}
+      <!-- ── PREDICTION RESULT CARD ── -->
+      <div class="result-card animate-in">
+        <div class="rc-header">
+          <div class="rc-status">✅ Breed Identified</div>
+          <div class="rc-animal-type">
+            {{ "🐄 Cattle" if result.animal_type == "cattle" else "🦬 Buffalo" }}
+          </div>
+        </div>
+
+        <div class="rc-breed-name">{{ result.breed }}</div>
+        <div class="rc-region">📍 {{ result.region }}</div>
+
+        <!-- Confidence Bar -->
+        <div class="conf-section">
+          <div class="conf-label">
+            <span>Confidence Score</span>
+            <strong>{{ (result.confidence * 100)|int }}%</strong>
+          </div>
+          <div class="conf-bar">
+            <div class="conf-bar-fill" style="width: {{ (result.confidence * 100)|int }}%"></div>
+          </div>
+          <p class="conf-note">
+            {% if result.confidence >= 0.90 %}
+              🟢 High confidence — result is reliable
+            {% elif result.confidence >= 0.75 %}
+              🟡 Moderate confidence — consider expert verification
+            {% else %}
+              🔴 Low confidence — please upload a clearer image
+            {% endif %}
+          </p>
+        </div>
+
+        <!-- Uploaded image preview -->
+        <div class="rc-image-preview">
+          <img src="{{ url_for('static', filename='uploads/' + result.image_path) }}"
+               alt="Uploaded Animal" />
+        </div>
+
+        <!-- Tabs -->
+        <div class="rc-tabs">
+          <button class="rc-tab active" data-tab="description">Description</button>
+          <button class="rc-tab" data-tab="care">Care Tips</button>
+          <button class="rc-tab" data-tab="economics">Economics</button>
+        </div>
+
+        <div class="rc-tab-content" id="tab-description">
+          <h4>Breed Description</h4>
+          <p>{{ result.description }}</p>
+          <div class="rc-meta">
+            <div class="rc-meta-item">
+              <span class="rc-meta-label">Milk Productivity</span>
+              <span class="rc-meta-val">🥛 {{ result.milk_productivity }}</span>
+            </div>
+            <div class="rc-meta-item">
+              <span class="rc-meta-label">Native Region</span>
+              <span class="rc-meta-val">📍 {{ result.region }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rc-tab-content hidden" id="tab-care">
+          <h4>🌿 Care &amp; Management Tips</h4>
+          <p>{{ result.care_tips }}</p>
+        </div>
+
+        <div class="rc-tab-content hidden" id="tab-economics">
+          <h4>💰 Estimated Economic Value</h4>
+          <p>{{ result.economic_value }}</p>
+          <div class="economic-note">
+            <strong>Note:</strong> These are indicative market estimates. Actual value depends on age, health, lactation stage, and local market conditions.
+          </div>
+        </div>
+
+        <div class="rc-footer">
+          <a href="{{ url_for('upload') }}" class="btn btn-outline btn-sm">📷 Identify Another</a>
+          <a href="{{ url_for('breeds') }}" class="btn btn-outline btn-sm">📖 View Breed Library</a>
+        </div>
+      </div>
+
+      {% else %}
+      <!-- ── PLACEHOLDER / TIPS ── -->
+      <div class="info-panel">
+        <h3>📌 Tips for Best Results</h3>
+        <ul class="tips-list">
+          <li>
+            <span class="tip-icon">☀️</span>
+            <div><strong>Good Lighting</strong><br/>Photograph in natural daylight. Avoid harsh shadows or backlight.</div>
+          </li>
+          <li>
+            <span class="tip-icon">📐</span>
+            <div><strong>Clear Angle</strong><br/>A side-profile or 3/4-front view captures key morphological features like horns, hump, and ear shape.</div>
+          </li>
+          <li>
+            <span class="tip-icon">📏</span>
+            <div><strong>Full Body Frame</strong><br/>Include the full body of the animal — head to tail — in the frame for maximum accuracy.</div>
+          </li>
+          <li>
+            <span class="tip-icon">🎯</span>
+            <div><strong>Single Animal</strong><br/>One animal per photo gives the AI the best chance to analyse individual traits accurately.</div>
+          </li>
+          <li>
+            <span class="tip-icon">🚫</span>
+            <div><strong>No Obstructions</strong><br/>Avoid photos where ropes, yokes, or fences partially cover the animal.</div>
+          </li>
+        </ul>
+
+        <div class="info-breeds-preview">
+          <h4>Supported Breeds Include</h4>
+          <div class="breed-chips">
+            <span>Gir</span><span>Sahiwal</span><span>Tharparkar</span>
+            <span>Ongole</span><span>Kankrej</span><span>Murrah</span>
+            <span>Surti</span><span>Jaffarabadi</span><span>Bhadawari</span>
+            <span>Nili-Ravi</span><span>Hallikar</span><span>Deoni</span>
+            <span>+18 more</span>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // ── Image Drop Zone ──
+  const dropZone   = document.getElementById('dropZone');
+  const imgInput   = document.getElementById('imageInput');
+  const previewWrap= document.getElementById('previewWrap');
+  const previewImg = document.getElementById('previewImg');
+  const removeBtn  = document.getElementById('removeImg');
+
+  dropZone.addEventListener('click', () => imgInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) showPreview(e.dataTransfer.files[0]);
+  });
+  imgInput.addEventListener('change', () => { if (imgInput.files[0]) showPreview(imgInput.files[0]); });
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewImg.src = e.target.result;
+      dropZone.style.display = 'none';
+      previewWrap.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    // Sync to input
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    imgInput.files = dt.files;
+  }
+
+  removeBtn.addEventListener('click', () => {
+    imgInput.value = '';
+    previewWrap.style.display = 'none';
+    dropZone.style.display = 'flex';
+  });
+
+  // ── Radio card highlight ──
+  document.querySelectorAll('.radio-card input').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+      radio.closest('.radio-card').classList.add('selected');
+    });
+  });
+
+  // ── Loading state on submit ──
+  document.getElementById('uploadForm').addEventListener('submit', () => {
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '⏳ Analysing…';
+    btn.disabled = true;
+  });
+
+  // ── Result tabs ──
+  document.querySelectorAll('.rc-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.rc-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.rc-tab-content').forEach(c => c.classList.add('hidden'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.remove('hidden');
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}PashuPehchan — AI Breed Recognition for Indian Cattle & Buffaloes{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════
+     HERO SECTION
+══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span>🏛️</span> Smart India Hackathon 2024
+    </div>
+    <h1 class="hero-title">
+      Know Your Livestock,<br/>
+      <em>Empower Your Farm</em>
+    </h1>
+    <p class="hero-subtitle">
+      Upload a photo of any Indian cattle or buffalo — our AI identifies the breed instantly, providing care tips, milk productivity data, and estimated economic value to help farmers, insurers, and officials make informed decisions.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('upload') }}" class="btn btn-primary">
+        📷 Upload Animal Photo
+      </a>
+      <a href="{{ url_for('breeds') }}" class="btn btn-outline">
+        Explore Breed Library →
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">30+</span>
+        <span class="stat-label">Breeds Covered</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">95%</span>
+        <span class="stat-label">Accuracy Target</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">14.5Cr</span>
+        <span class="stat-label">Farmers Benefited</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-img">🐄</div>
+      <div class="hero-card-body">
+        <div class="hc-badge">Identified</div>
+        <div class="hc-breed">Gir Cow</div>
+        <div class="hc-conf">Confidence: <strong>94%</strong></div>
+        <div class="hc-tags">
+          <span>Gujarat</span>
+          <span>A2 Milk</span>
+          <span>₹1.2L value</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     PROBLEM STATEMENT
+══════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-label">The Challenge</div>
+    <h2 class="section-title">Why Breed Identification Matters</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">📋</div>
+        <h3>Inaccurate Insurance</h3>
+        <p>Without proper breed identification, livestock insurance valuations are often inaccurate, leading to under-compensation for farmers after loss events.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🧬</div>
+        <h3>Breed Dilution</h3>
+        <p>India's 30+ indigenous cattle breeds face extinction due to indiscriminate crossbreeding, threatening centuries of genetic heritage and local adaptation.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📊</div>
+        <h3>No Centralized Data</h3>
+        <p>The Ministry lacks real-time data on breed distribution across states, making policy planning and resource allocation inefficient.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🌾</div>
+        <h3>Farmer Knowledge Gap</h3>
+        <p>Many smallholder farmers cannot identify the breed of their own animals, leading to suboptimal feeding, breeding, and veterinary care decisions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     SOLUTION OVERVIEW
+══════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Our Solution</div>
+    <h2 class="section-title">How PashuPehchan Works</h2>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📸</div>
+        <h3>Upload Photo</h3>
+        <p>Farmer or official uploads a clear photo of the animal using a smartphone or desktop.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🤖</div>
+        <h3>AI Analysis</h3>
+        <p>Our CNN model analyses morphological features — coat colour, horn shape, hump, ear structure — to identify the breed.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">📋</div>
+        <h3>Get Results</h3>
+        <p>Receive breed name, confidence score, care tips, milk productivity data, and estimated economic value instantly.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-icon">💾</div>
+        <h3>Data Recorded</h3>
+        <p>All submissions are saved in the national database for policy planning, insurance, and research purposes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     KEY FEATURES
+══════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Built for the Field</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>High-Accuracy CNN Model</h3>
+        <p>Trained on thousands of annotated images of Indian cattle and buffalo, covering 30+ breeds across diverse lighting and field conditions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile-First Design</h3>
+        <p>Works on low-end smartphones in rural areas. Simple interface requiring no technical expertise from farmers.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔬</div>
+        <h3>Detailed Breed Reports</h3>
+        <p>Beyond identification — provides breed-specific care tips, vaccination schedules, optimal feed, and productivity benchmarks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Economic Valuation</h3>
+        <p>Estimated market value helps farmers negotiate fair prices and enables accurate insurance premium calculation for officials.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h3>Geo-tagged Records</h3>
+        <p>Location data with each submission creates a real-time national map of breed distribution for government planning.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Offline Resilience</h3>
+        <p>Designed to work with low connectivity — image processing queued and synced when connection is restored.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     REAL-WORLD IMPACT
+══════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Impact</div>
+    <h2 class="section-title">Who Benefits?</h2>
+    <div class="impact-grid">
+      <div class="impact-card impact-farmer">
+        <div class="impact-emoji">🌾</div>
+        <h3>Farmers</h3>
+        <ul>
+          <li>Know breed-specific nutrition needs</li>
+          <li>Get fair insurance claims</li>
+          <li>Plan selective breeding wisely</li>
+          <li>Access government breed schemes</li>
+        </ul>
+      </div>
+      <div class="impact-card impact-official">
+        <div class="impact-emoji">🏛️</div>
+        <h3>Government Officials</h3>
+        <ul>
+          <li>Real-time breed census data</li>
+          <li>Monitor indigenous breed populations</li>
+          <li>Target conservation programmes</li>
+          <li>Verify livestock in subsidy schemes</li>
+        </ul>
+      </div>
+      <div class="impact-card impact-insurer">
+        <div class="impact-emoji">📊</div>
+        <h3>Insurance Companies</h3>
+        <ul>
+          <li>Accurate premium calculation</li>
+          <li>Reduce fraudulent claims</li>
+          <li>Standardise breed-based valuation</li>
+          <li>Digital proof of animal identity</li>
+        </ul>
+      </div>
+      <div class="impact-card impact-vet">
+        <div class="impact-emoji">🩺</div>
+        <h3>Veterinarians</h3>
+        <ul>
+          <li>Breed-specific disease risk profiling</li>
+          <li>Tailored vaccination protocols</li>
+          <li>Genetic counselling for breeders</li>
+          <li>Research data collection</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     TEAM SECTION
+══════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-label">The Team</div>
+    <h2 class="section-title">Meet the Builders</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👩‍💻</div>
+        <h3>Priya Sharma</h3>
+        <p class="team-role">ML Engineer</p>
+        <p class="team-desc">CNN model architecture, dataset curation, and training pipeline</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍💻</div>
+        <h3>Arjun Mehta</h3>
+        <p class="team-role">Backend Developer</p>
+        <p class="team-desc">Flask API, MySQL schema design, and image processing pipeline</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍🎨</div>
+        <h3>Sneha Patil</h3>
+        <p class="team-role">UI/UX Designer</p>
+        <p class="team-desc">Interface design, user research with farming communities</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍🔬</div>
+        <h3>Rohit Yadav</h3>
+        <p class="team-role">Domain Expert</p>
+        <p class="team-desc">Livestock biology, breed data compilation, and field testing</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     CTA SECTION
+══════════════════════════════════════════ -->
+<section class="section cta-section">
+  <div class="container cta-inner">
+    <h2>Ready to Identify a Breed?</h2>
+    <p>Upload an image of your cattle or buffalo and receive an instant AI-powered breed report.</p>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg">
+      📷 Start Identification
+    </a>
+  </div>
+</section>
+
+{% endblock %}

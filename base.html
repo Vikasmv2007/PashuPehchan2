@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}PashuPehchan — Indian Cattle & Buffalo Breed Recognition{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="{{ url_for('home') }}" class="nav-brand">
+        <span class="brand-icon">🐄</span>
+        <span class="brand-text">PashuPehchan</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint=='home' %}active{% endif %}">Home</a></li>
+        <li><a href="{{ url_for('upload') }}" class="nav-link {% if request.endpoint=='upload' %}active{% endif %}">Identify Breed</a></li>
+        <li><a href="{{ url_for('breeds') }}" class="nav-link {% if request.endpoint=='breeds' %}active{% endif %}">Breed Library</a></li>
+        <li><a href="{{ url_for('records') }}" class="nav-link {% if request.endpoint=='records' %}active{% endif %}">Records</a></li>
+        <li><a href="{{ url_for('upload') }}" class="nav-cta">Try Now →</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── FLASH MESSAGES ── -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">
+            <span>{{ msg }}</span>
+            <button onclick="this.parentElement.remove()">✕</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ── MAIN CONTENT ── -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-icon">🐄</span>
+        <span class="brand-text">PashuPehchan</span>
+        <p class="footer-tagline">AI-powered breed recognition for Indian livestock</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('upload') }}">Identify Breed</a>
+          <a href="{{ url_for('breeds') }}">Breed Library</a>
+          <a href="{{ url_for('records') }}">Records</a>
+        </div>
+        <div class="footer-col">
+          <h4>Initiative</h4>
+          <p>Smart India Hackathon 2024</p>
+          <p>Ministry of Fisheries, Animal Husbandry &amp; Dairying</p>
+          <p>Theme: Agriculture &amp; Rural Development</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tech Stack</h4>
+          <p>Python · Flask · MySQL</p>
+          <p>CNN Image Classification</p>
+          <p>HTML5 · CSS3</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Built for Smart India Hackathon 2024 &nbsp;|&nbsp; Problem: Image Based Breed Recognition for Cattle &amp; Buffaloes of India</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Mobile menu toggle
+    document.getElementById('navToggle').addEventListener('click', function () {
+      document.getElementById('navLinks').classList.toggle('open');
+      this.classList.toggle('active');
+    });
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

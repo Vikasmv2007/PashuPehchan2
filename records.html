@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Records — PashuPehchan Admin{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="section-label">Admin Panel</div>
+    <h1>Submission Records</h1>
+    <p>All animal images submitted for breed identification are logged here. This data feeds the national livestock database for policy and research purposes.</p>
+  </div>
+</div>
+
+<div class="container records-page">
+
+  <!-- ── Summary Stats ── -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="sb-num">{{ total }}</div>
+      <div class="sb-label">Total Submissions</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-num">{{ cattle_count }}</div>
+      <div class="sb-label">Cattle Images</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-num">{{ buffalo_count }}</div>
+      <div class="sb-label">Buffalo Images</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-num">{{ avg_confidence }}%</div>
+      <div class="sb-label">Avg. Confidence</div>
+    </div>
+  </div>
+
+  <!-- ── Records Table ── -->
+  {% if records %}
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <h2>All Submissions</h2>
+      <input type="text" id="tableSearch" placeholder="🔍  Search breed, location…" class="table-search" />
+    </div>
+    <div class="table-scroll">
+      <table class="data-table" id="recordsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Image</th>
+            <th>Type</th>
+            <th>Predicted Breed</th>
+            <th>Confidence</th>
+            <th>Location</th>
+            <th>Age (yrs)</th>
+            <th>Notes</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+          <tr>
+            <td class="td-id">{{ r.id }}</td>
+            <td class="td-img">
+              <img src="{{ url_for('static', filename='uploads/' + r.image_path) }}"
+                   alt="{{ r.predicted_breed }}"
+                   class="table-thumb"
+                   onerror="this.src='';this.alt='📷'" />
+            </td>
+            <td>
+              <span class="type-badge type-{{ r.animal_type }}">
+                {{ "🐄 Cattle" if r.animal_type == "cattle" else "🦬 Buffalo" }}
+              </span>
+            </td>
+            <td class="td-breed"><strong>{{ r.predicted_breed }}</strong></td>
+            <td class="td-conf">
+              <div class="mini-conf">
+                <div class="mini-bar">
+                  <div class="mini-fill" style="width:{{ (r.confidence_score * 100)|int }}%"></div>
+                </div>
+                <span>{{ (r.confidence_score * 100)|int }}%</span>
+              </div>
+            </td>
+            <td>{{ r.location or '—' }}</td>
+            <td>{{ r.age_years or '—' }}</td>
+            <td class="td-notes" title="{{ r.notes or '' }}">{{ (r.notes or '—')[:40] }}{% if r.notes and r.notes|length > 40 %}…{% endif %}</td>
+            <td class="td-date">
+              {% if r.created_at %}
+                {{ r.created_at.strftime('%d %b %Y, %H:%M') }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      Showing {{ records|length }} record{{ 's' if records|length != 1 else '' }}
+    </div>
+  </div>
+
+  {% else %}
+  <!-- ── Empty State ── -->
+  <div class="empty-records">
+    <div class="er-icon">📭</div>
+    <h3>No Records Yet</h3>
+    <p>No animal images have been submitted yet. Records will appear here once farmers and officials start uploading photos.</p>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">📷 Upload First Image</a>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Client-side table search
+  const searchInput = document.getElementById('tableSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#recordsTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+</script>
+{% endblock %}

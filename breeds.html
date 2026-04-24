@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Breed Library — PashuPehchan{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="section-label">Knowledge Base</div>
+    <h1>Indian Livestock Breed Library</h1>
+    <p>Comprehensive reference guide for indigenous cattle and buffalo breeds of India — covering physical traits, regional origins, productivity data, and economic significance.</p>
+  </div>
+</div>
+
+<div class="container breeds-page">
+
+  <!-- ── Filter Tabs ── -->
+  <div class="breed-tabs">
+    <button class="btab active" data-target="cattle-section">🐄 Cattle Breeds ({{ cattle_list|length }})</button>
+    <button class="btab" data-target="buffalo-section">🦬 Buffalo Breeds ({{ buffalo_list|length }})</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       CATTLE BREEDS
+  ══════════════════════════════════ -->
+  <section id="cattle-section" class="breed-section">
+    <div class="bs-header">
+      <h2>🐄 Indigenous Cattle Breeds of India</h2>
+      <p>India is home to 43 recognized cattle breeds, many of which produce the prized A2 milk high in beta-casein protein. These breeds are adapted to diverse agro-climatic zones across the subcontinent.</p>
+    </div>
+
+    <div class="breed-grid">
+      {% for b in cattle_list %}
+      <div class="breed-card" data-type="cattle">
+        <div class="bc-top">
+          <div class="bc-icon">🐄</div>
+          <div class="bc-header-text">
+            <h3 class="bc-name">{{ b.breed_name }}</h3>
+            <div class="bc-region">📍 {{ b.region }}</div>
+          </div>
+          <div class="bc-type-badge cattle-badge">Cattle</div>
+        </div>
+
+        <div class="bc-stat-row">
+          <div class="bc-stat">
+            <span class="bc-stat-label">Milk Yield</span>
+            <span class="bc-stat-val">🥛 {{ b.milk_productivity }}</span>
+          </div>
+        </div>
+
+        <div class="bc-traits">
+          <h4>Physical Traits</h4>
+          <p>{{ b.traits }}</p>
+        </div>
+
+        {% if b.care_tips is defined and b.care_tips %}
+        <details class="bc-details">
+          <summary>Care &amp; Management Tips</summary>
+          <p>{{ b.care_tips }}</p>
+        </details>
+        {% endif %}
+
+        <div class="bc-economic">
+          <span class="eco-label">💰 Economic Value</span>
+          <span class="eco-val">{{ b.economic_value }}</span>
+        </div>
+      </div>
+      {% else %}
+      <p class="empty-state">No cattle breeds found. Please ensure the database is populated using schema.sql.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       BUFFALO BREEDS
+  ══════════════════════════════════ -->
+  <section id="buffalo-section" class="breed-section hidden">
+    <div class="bs-header">
+      <h2>🦬 Indigenous Buffalo Breeds of India</h2>
+      <p>India has 19 recognized buffalo breeds and accounts for over 56% of the world's buffalo population. Buffalo milk is richer in fat and protein than cow milk, making it ideal for dairy products like ghee, paneer, and curd.</p>
+    </div>
+
+    <div class="breed-grid">
+      {% for b in buffalo_list %}
+      <div class="breed-card" data-type="buffalo">
+        <div class="bc-top">
+          <div class="bc-icon">🦬</div>
+          <div class="bc-header-text">
+            <h3 class="bc-name">{{ b.breed_name }}</h3>
+            <div class="bc-region">📍 {{ b.region }}</div>
+          </div>
+          <div class="bc-type-badge buffalo-badge">Buffalo</div>
+        </div>
+
+        <div class="bc-stat-row">
+          <div class="bc-stat">
+            <span class="bc-stat-label">Milk Yield</span>
+            <span class="bc-stat-val">🥛 {{ b.milk_productivity }}</span>
+          </div>
+        </div>
+
+        <div class="bc-traits">
+          <h4>Physical Traits</h4>
+          <p>{{ b.traits }}</p>
+        </div>
+
+        {% if b.care_tips is defined and b.care_tips %}
+        <details class="bc-details">
+          <summary>Care &amp; Management Tips</summary>
+          <p>{{ b.care_tips }}</p>
+        </details>
+        {% endif %}
+
+        <div class="bc-economic">
+          <span class="eco-label">💰 Economic Value</span>
+          <span class="eco-val">{{ b.economic_value }}</span>
+        </div>
+      </div>
+      {% else %}
+      <p class="empty-state">No buffalo breeds found. Please ensure the database is populated using schema.sql.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <div class="breeds-cta">
+    <p>Know an animal? Identify its breed with our AI tool.</p>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">📷 Upload &amp; Identify →</a>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.querySelectorAll('.btab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.breed-section').forEach(s => s.classList.add('hidden'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.remove('hidden');
+    });
+  });
+</script>
+{% endblock %}
